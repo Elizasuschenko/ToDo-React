@@ -1,5 +1,6 @@
 {
   "name": "to-do-react",
+  "homepage": "https://elizasuschenko.github.io/to-do-react/build/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
