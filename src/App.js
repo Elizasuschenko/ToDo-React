@@ -5,94 +5,75 @@ class App extends React.Component{
     constructor(props){
         super()
         this.state = {
-            doshki: [
+            list: [
 
             ],
             itemText: '',
-            length:  0,
-            active: [],
-            complite: []
+
         }
         this.AddDoshki = this.AddDoshki.bind(this)
-        this.addInfo = this.addInfo.bind(this)
+        this.changeText = this.changeText.bind(this)
         this.removeDoshki = this.removeDoshki.bind(this)
         this.checkedDoshki = this.checkedDoshki.bind(this)
-        this.active = this.active.bind(this)
-        this.completed = this.completed.bind(this)
+        this.filter = this.filter.bind(this)
         this.clearComplite = this.clearComplite.bind(this)
     }
-    checkedDoshki(item){
-        this.setState(({doshki, length})  => {
-            const index = doshki.indexOf(item);
-            const newItems = [...doshki];
-            newItems[index] = {
-                ...item,
-                done: !item.done
-            };
-            if(newItems[index].done === true){
-                return {
-                    length: length - 1,
-                    doshki: newItems
-                }
-            }
-            return{
-                length: length + 1,
-                doshki: newItems
-            }
-        })
-    }
-    active(){
-        this.setState(({doshki}) => {
-            return {
-                doshki: doshki.filter(item => !item.done)
-            }
-        })
+    checkedDoshki(id){
+        this.setState(({list})  => {
+            this.setState(prevState => ({
+                list: prevState.list.map(m => ({
+                    ...list,
+                    done: !list.done
+                }))
+            }))})}
 
-    }
-    completed(){
-        this.setState(({doshki}) => {
-            return {
-                doshki: doshki.filter(item => item.done)
-            }
-        })
-    }
     clearComplite(){
         this.setState(prevState => {
             return {
-                doshki: prevState.doshki.filter(item => item.done === false)
+                list: prevState.list.filter(item => item.done === false)
             }
         })
     }
     removeDoshki(todo){
             this.setState(prevState => {
                 return {
-                    doshki: prevState.doshki.filter(item => item !== todo),
-                    length: prevState.length -1
+                    list: prevState.list.filter(item => item !== todo),
                 }
             })
 
+    }
+    filter(){
+        const {filterBy, list} = this.state;
+        let filteredItems = list;
+        if (filterBy === 'active') {
+            filteredItems = list.filter(item => item.done === false );
+        }
+        if (filterBy === 'done') {
+            filteredItems = list.filter(item => item.done);
+        }
+        return filteredItems;
     }
     AddDoshki(event){
         if(event.key !== 'Enter') {
             return
         }
-            this.setState(({ doshki, itemText, length }) => {
+            this.setState(({ list, itemText, length }) => {
                 let doshkiNew = {
-                    item: doshki.length ,
+                    item: list.length ,
                     value: itemText,
                     done: false
                 }
                 if(doshkiNew.value === ''){
                     return
                 }
-                return { doshki: [ ...doshki, doshkiNew ],
+                return { list: [ ...list, doshkiNew ],
                     itemText: '',
                     length: length + 1
                 }
             })
 
     }
-    addInfo(value){
+    changeText(value){
 
         this.setState(() => {
             return { itemText: value }
@@ -101,14 +82,11 @@ class App extends React.Component{
     render(){
         return (
             <Skelet
-                completed = { this.completed }
-                active = { this.active }
-                complite = { this.clearComplite }
+                filter = { this.filter }
                 itemText = { this.state.itemText }
-                mainArr = { this.state.doshki}
-                length = { this.state.length}
+                mainArr = { this.state.list}
                 AddDoshki = {this.AddDoshki}
-                addInfo = {this.addInfo}
+                changeText = {this.changeText}
                 removeDoshki = { this.removeDoshki }
                 checkedDoshki = { this.checkedDoshki }
             />
