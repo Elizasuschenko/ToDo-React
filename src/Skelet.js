@@ -1,62 +1,55 @@
 import React from 'react'
 
 class Skelet extends React.Component {
-    constructor(){
-        super()
-        this.classLi = React.createRef();
-        this.addClass = this.addClass.bind(this)
-    }
-
-    addClass(){
-        this.setState(() => {
-            return
-        })
-    }
 
     render() {
+        const length = this.state.items.filter(item => !item.done).length;
         const { mainArr } = this.props;
+        const items = this.filter();
+        const ToDo = items.map((todo) => (
+                <Skelet.Item todo = { todo }
+                             key = { todo.id }
+                             remove = {() => mainArr.removeDoshki(todo)}
+                             checkedDoshki = {() => mainArr.checkedDoshki(todo)}
+                />
+
+            )
+        );
         return (
             <div className="container">
                 <h1>To do list </h1>
                 <ul>
-                    { mainArr.map((todo) => (
-                          <Skelet.Item key = { todo.item }
-                                       todo ={todo}
-                                       remove = {() => this.props.removeDoshki(todo)}
-                                       checkedDoshki = {() => this.props.checkedDoshki(todo)}
-                          />
-
-                        )
-                    )}
+                    { ToDo }
                 </ul>
                 <div>
                     <input type="text"
                            onKeyPress={this.props.AddDoshki}
                            value={ this.props.itemText }
-                           onChange={(event) => this.props.addInfo(event.target.value)
+                           onChange={(event) => this.props.changeText(event.target.value)
                            }/>
                 </div>
                 <div className="bottom">
-                    <span>{this.props.length} item left </span>
+                    <span>{length} item left </span>
                     <div className="bottom-center">
-                        <button>All</button>
-                        <button onClick={ this.props.active }>Active</button>
-                        <button onClick={ this.props.completed }>Completed</button>
+                        <button onClick={() => {this.props.filter('all')}}>All</button>
+                        <button onClick={() => {this.props.filter('done')}}>Completed</button>
+                        <button onClick={() => {this.props.filter('active')}}>Active</button>
                     </div>
-                    <button onClick={ this.props.complite }>Clear completed</button>
+                    <button >Clear completed</button>
                 </div>
             </div>
+
         )
     }
 
 }
-Skelet.Item = ({ children, remove, todo, checkedDoshki }) => {
+Skelet.Item = ({ children, remove, todo, checkedDoshki, key }) => {
 
     return (
         <li >
             <input id={`todo-${todo.item}`} type="checkbox" className="todo_input" checked={todo.done} onChange={ () => checkedDoshki() } />
             <label htmlFor={`todo-${todo.item}`}>{todo.value}</label>
-            <span onClick={ () => remove() }>   Х</span>
+            <span onClick={ () => remove( key ) }>   Х</span>
         </li>
     )
 };
